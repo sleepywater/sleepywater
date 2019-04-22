@@ -1080,7 +1080,7 @@ pre .javascript .function {
   color: #fc6423;
 }
 .header {
-  background: transparent;
+  background: url("../image/erlee.png");
 }
 .header-inner {
   position: relative;
@@ -1772,7 +1772,7 @@ pre .javascript .function {
   width: 4px;
   height: 4px;
   border-radius: 50%;
-  background: #41fffc;
+  background: #39c3ee;
 }
 .feed-link,
 .chat {
